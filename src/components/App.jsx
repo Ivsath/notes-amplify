@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 
 import { listNotes } from '../graphql/queries'
 import {
+  updateNote as UpdateNote,
   createNote as CreateNote,
   deleteNote as DeleteNote,
 } from '../graphql/mutations'
@@ -81,11 +82,31 @@ export default function Home() {
       ...state.notes.slice(index + 1),
     ]
     dispatch({ type: 'SET_NOTES', notes })
+
     try {
       await API.graphql({ query: DeleteNote, variables: { input: { id } } })
       console.log('Successfully deleted note!')
     } catch (err) {
       console.log({ err })
+    }
+  }
+
+  const updateNote = async (note) => {
+    const index = state.notes.findIndex((n) => n.id === note.id)
+    const notes = [...state.notes]
+    notes[index].completed = !note.completed
+    dispatch({ type: 'SET_NOTES', notes })
+
+    try {
+      await API.graphql({
+        query: UpdateNote,
+        variables: {
+          input: { id: note.id, completed: notes[index].completed },
+        },
+      })
+      console.log('note successfully updated!')
+    } catch (err) {
+      console.log('error: ', err)
     }
   }
 
@@ -98,6 +119,9 @@ export default function Home() {
       <List.Item
         style={styles.item}
         actions={[
+          <Button type="text" onClick={() => updateNote(item)}>
+            {item.completed ? 'completed' : 'mark completed'}
+          </Button>,
           <Button danger type="text" onClick={() => deleteNote(item)}>
             Delete
           </Button>,
