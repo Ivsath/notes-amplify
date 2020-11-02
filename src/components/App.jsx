@@ -4,7 +4,10 @@ import { List, Input, Button } from 'antd'
 import { v4 as uuid } from 'uuid'
 
 import { listNotes } from '../graphql/queries'
-import { createNote as CreateNote } from '../graphql/mutations'
+import {
+  createNote as CreateNote,
+  deleteNote as DeleteNote,
+} from '../graphql/mutations'
 
 const CLIENT_ID = uuid()
 
@@ -71,13 +74,35 @@ export default function Home() {
     }
   }
 
+  const deleteNote = async ({ id }) => {
+    const index = state.notes.findIndex((n) => n.id === id)
+    const notes = [
+      ...state.notes.slice(0, index),
+      ...state.notes.slice(index + 1),
+    ]
+    dispatch({ type: 'SET_NOTES', notes })
+    try {
+      await API.graphql({ query: DeleteNote, variables: { input: { id } } })
+      console.log('Successfully deleted note!')
+    } catch (err) {
+      console.log({ err })
+    }
+  }
+
   function onChange(e) {
     dispatch({ type: 'SET_INPUT', name: e.target.name, value: e.target.value })
   }
 
   const renderItem = (item) => {
     return (
-      <List.Item style={styles.item}>
+      <List.Item
+        style={styles.item}
+        actions={[
+          <Button danger type="text" onClick={() => deleteNote(item)}>
+            Delete
+          </Button>,
+        ]}
+      >
         <List.Item.Meta title={item.name} description={item.description} />
       </List.Item>
     )
@@ -115,5 +140,4 @@ const styles = {
   container: { padding: 20 },
   input: { marginBottom: 10 },
   item: { textAlign: 'left' },
-  p: { color: '#1890ff' },
 }
