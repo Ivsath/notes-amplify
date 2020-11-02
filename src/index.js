@@ -4,15 +4,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Amplify from 'aws-amplify'
 
-import App from './sections/App'
 import reportWebVitals from './reportWebVitals'
 import config from './aws-exports'
+import { Home } from './sections'
 
 Amplify.configure(config)
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Home />
   </React.StrictMode>,
   document.getElementById('root'),
 )
