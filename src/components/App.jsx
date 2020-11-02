@@ -2,7 +2,7 @@ import { useEffect, useReducer } from 'react'
 import { API } from 'aws-amplify'
 import { List } from 'antd'
 
-import { listNotes } from '../../graphql/queries'
+import { listNotes } from '../graphql/queries'
 
 const initialState = {
   notes: [],
@@ -22,7 +22,7 @@ function reducer(state, action) {
   }
 }
 
-export const Home = () => {
+export default function Home() {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {

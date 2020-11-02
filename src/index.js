@@ -6,13 +6,13 @@ import Amplify from 'aws-amplify'
 
 import reportWebVitals from './reportWebVitals'
 import config from './aws-exports'
-import { Home } from './sections'
+import App from './components/App'
 
 Amplify.configure(config)
 
 ReactDOM.render(
   <React.StrictMode>
-    <Home />
+    <App />
   </React.StrictMode>,
   document.getElementById('root'),
 )
